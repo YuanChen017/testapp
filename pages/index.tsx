@@ -1,20 +1,21 @@
+import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 const Endpoint = `https://rickandmortyapi.com/api/character/`;
 
-export async function getServerSideProps() {
+export const getStaticProps = (async (context) => {
   const res = await fetch(Endpoint);
   const data = await res.json();
-  return {
-    props: {
-      data,
-    },
-  };
-}
+  return { props: { data } };
+}) satisfies GetStaticProps<{
+  data: any;
+}>;
 
-export default function Home({ data }: any) {
+export default function Home({
+  data,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   const { info, results: defaultResults = [] } = data;
   const [results, setResults] = useState(defaultResults);
   const [page, setPage] = useState({
